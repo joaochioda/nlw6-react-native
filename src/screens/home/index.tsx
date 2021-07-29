@@ -6,10 +6,13 @@ import { Profile } from '../../components/profile';
 import { ListHeader } from '../../components/listHeader';
 import { Appointment } from '../../components/appointment';
 import { ListDivider } from '../../components/listDivider';
+import { Background } from '../../components/background';
 
 import {style} from './styles';
+import { useNavigation } from '@react-navigation/native';
 
 export function Home () {
+    const navigation = useNavigation();
     const [category, setCategory] = useState('');
 
     const appoinments = [
@@ -17,7 +20,7 @@ export function Home () {
             id: '1',
             guild: {
                 id: '1',
-                name: 'Lendárrios',
+                name: 'Lendários',
                 icon: null,
                 owner: true
             },
@@ -43,11 +46,18 @@ export function Home () {
         categoryId === category ? setCategory('') : setCategory(categoryId);
     }
 
+    function handleAppointmentDetails() {
+        navigation.navigate('AppointmentDetails')
+    }
+    function handleAppointmentCreate() {
+        navigation.navigate('AppointmentCreate')
+    }
+
     return ( 
-    <View>
+    <Background>
         <View style={style.header}>
             <Profile />
-            <ButtonAdd />
+            <ButtonAdd onPress={handleAppointmentCreate}/>
         </View>
 
         <View>
@@ -62,12 +72,12 @@ export function Home () {
             data={appoinments} 
             keyExtractor={item => item.id} 
             renderItem={({ item }) => (
-                <Appointment data={item}/>
+                <Appointment data={item} onPress={handleAppointmentDetails}/>
             )}
             ItemSeparatorComponent={() => <ListDivider />}
             style={style.matches}
             showsVerticalScrollIndicator={false}
         />
-    </View>
+    </Background>
     );
 }
