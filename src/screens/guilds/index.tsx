@@ -14,7 +14,7 @@ export function Guilds({handleGuildsSelected}: Props) {
        name: 'Lendarios',
        icon: 'null',
        owner: true
-   }]
+   },]
 
     return (
         <View style={style.container}>
@@ -22,8 +22,10 @@ export function Guilds({handleGuildsSelected}: Props) {
                 data={guilds} 
                 keyExtractor={item => item.id}
                 renderItem={({item}) => <Guild data={item} onPress={() =>handleGuildsSelected(item)} />}
-                ItemSeparatorComponent={() => <ListDivider />}
+                ItemSeparatorComponent={() => <ListDivider isCentered/>}
+                ListHeaderComponent={() => <ListDivider isCentered/>}
                 showsVerticalScrollIndicator={false}
+                contentContainerStyle={{paddingBottom: 68, paddingTop: 104}}
                 style={style.guilds}
             />
         </View>
