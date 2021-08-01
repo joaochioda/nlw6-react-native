@@ -14,11 +14,24 @@ import { ModalView } from '../../components/modalView';
 import { Guilds } from '../guilds';
 import { GuildProps } from '../../components/guild';
 import { Background } from '../../components/background';
+import uuid from 'react-native-uuid'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {COLLECTION_APPOINTMENT} from '../../config/database'
+import { useNavigation } from '@react-navigation/native';
 
 export function AppointmentCreate() {
     const [category, setCategory] = useState('');
     const [openGuildsModal, setOpenGuildsModal] = useState(false);
     const [guild, setGuild] = useState<GuildProps>({} as GuildProps);
+
+    const [day,setDay] = useState('');
+    const [month,setMonth] = useState('');
+    const [hour,setHour] = useState('');
+    const [minute,setMinute] = useState('');
+    const [description,setDescription] = useState('');
+
+    const navigation = useNavigation();
+
 
     function handleOpenGuilds() {
         setOpenGuildsModal(true);
@@ -35,6 +48,23 @@ export function AppointmentCreate() {
 
     function handleCategorySelect(categoryId: string) {
         setCategory(categoryId);
+    }
+
+    async function handleSave() {
+        const newAppointment = {
+            id: uuid.v4(),
+            guild,
+            category,
+            date: `${day}/${month} às ${hour}:${minute}h`,
+            description
+        }
+
+        const storage = await AsyncStorage.getItem(COLLECTION_APPOINTMENT);
+        const appointments = storage ? JSON.parse(storage) : [];
+
+        await AsyncStorage.setItem(COLLECTION_APPOINTMENT, JSON.stringify([...appointments, newAppointment]));
+
+        navigation.navigate('Home');
     }
 
     return (
@@ -57,7 +87,7 @@ export function AppointmentCreate() {
                     <RectButton onPress={handleOpenGuilds}>
                         <View style={style.select}>
                             { guild.icon 
-                                ? <GuildIcon /> 
+                                ? <GuildIcon guildId={guild.id} iconId={guild.icon}/> 
                                 : <View style={style.image}/> 
                             }
                             <View  style={style.selectBody}>
@@ -76,11 +106,11 @@ export function AppointmentCreate() {
                                 Dia e mês
                             </Text>
                             <View style={style.column}>
-                                <SmallInput maxLength={2}/>
+                                <SmallInput maxLength={2} onChangeText={setDay}/>
                                 <Text style={style.divider}>
                                     /
                                 </Text>
-                                <SmallInput maxLength={2}/>
+                                <SmallInput maxLength={2}  onChangeText={setMonth}/>
                             </View>
                         </View>
 
@@ -90,11 +120,11 @@ export function AppointmentCreate() {
                                 Hora e minuto
                             </Text>
                             <View style={style.column}>
-                                <SmallInput maxLength={2}/>
+                                <SmallInput maxLength={2} onChangeText={setHour}/>
                                 <Text style={style.divider}>
                                     :
                                 </Text>
-                                <SmallInput maxLength={2}/>
+                                <SmallInput maxLength={2} onChangeText={setMinute}/>
                             </View>
                         </View>
 
@@ -109,9 +139,9 @@ export function AppointmentCreate() {
                             Max 100 caracteres
                         </Text>
                     </View>
-                        <TextArea multiline maxLength={100} numberOfLines={5} autoCorrect={false}/>
+                        <TextArea multiline maxLength={100} numberOfLines={5} autoCorrect={false} onChangeText={setDescription}/>
                         <View style={style.footer}>
-                            <Button title="Agendar"/>
+                            <Button title="Agendar" onPress={handleSave}/>
                         </View>
 
                 </View>

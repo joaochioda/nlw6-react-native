@@ -11,7 +11,7 @@ import { theme } from '../../global/styles/theme';
 import { GuildProps } from '../guild';
 import { LinearGradient } from 'expo-linear-gradient';
 
-export type AppointmentProps ={
+export type AppointmentProps = {
     id: string;
     guild: GuildProps;
     category: string;
@@ -32,7 +32,7 @@ export function Appointment({data, ...rest}: Props) {
         <RectButton {...rest}>
             <View style={style.container}>
                 <LinearGradient style={style.guildIconContainer} colors={[secondary50, secondary70]}>
-                    <GuildIcon />
+                    <GuildIcon guildId={data.guild.id} iconId={data.guild.icon}/>
                 </LinearGradient>
                 <View style={style.content}> 
                     <View  style={style.header}>
